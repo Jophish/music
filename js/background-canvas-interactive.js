@@ -8,10 +8,10 @@ document.body.appendChild( renderer.domElement );
 
 camera.position.z = 1000;
 
-
+var line_width_val = 1;
 var counter = 0;
 
-var num_bars = 20;
+var num_bars = 40;
 
 var bar_width = 100;
 
@@ -20,7 +20,7 @@ var lineArray = new Array();
 
 var res = 10;
 var pt_interval = 5;
-var num_lines = 15;
+var num_lines = 5;
 var v_height = 75;
 var x_offset = res*pt_interval/2;
 var y_offset =  Math.floor(v_height*num_lines/2);
@@ -32,9 +32,15 @@ for (var k = 0; k<num_bars; k++){
   var bar = new Array(); //list of lines in single bar
   for (var i = 0; i < num_lines; i++){
 
-    var mat = new THREE.LineBasicMaterial({color:0x000000});
-    //mat.color = "#FFFFFF";
-    //mat.color = "#FF0000";
+    
+    var sat = 1;
+    var hue = (k*1.0)/num_bars;
+    console.log(hue);
+    var val = ((i*1.0)/num_lines)/2.0 + .5;
+    var color = tinycolor.fromRatio({h:hue, s:sat, v:val});
+    color = color.toHexString();
+    var mat = new THREE.LineBasicMaterial({color:color});
+    //mat.color = color;
     mat.linewidth = 1;
     var obj = new THREE.Line( new THREE.Geometry(), mat); //single line in one bar
     var y = i*v_height - y_offset;
@@ -71,11 +77,11 @@ function update_lines(){
       //l_freq = freq;
       for (var i =1; i < res; i++){
 	var x =  i*pt_interval - x_offset  - (bar_offset + lines*bar_width);
-	var y = (line*v_height - y_offset) + Math.sin((i + counter + line*(1.0/freq)/num_lines)*l_freq*2*Math.PI)*wave_mag;
+	var y = (line*v_height - y_offset) + Math.sin((lines*10 +  i + counter + line*(1.0/freq)/num_lines)*l_freq*2*Math.PI)*wave_mag;
 	var z = 0;
 	new_pos.push(new THREE.Vector3(x,y,z));
       }
-      obj.material.linewidth = 5*Math.abs(1*Math.sin(counter*line/num_lines*2*Math.PI*freq/10));
+      obj.material.linewidth = line_width_val*Math.abs(1*Math.sin(counter*line/num_lines*2*Math.PI*freq/10));
     //obj.material.linewidth = 1;
     obj.geometry.vertices = new_pos;
     obj.geometry.verticesNeedUpdate = true;
